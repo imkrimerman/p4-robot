@@ -1,0 +1,24 @@
+{
+  "name": "p4-robot",
+  "version": "1.0.0",
+  "description": "Node port to perforce",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imkrimerman/p4-robot.git"
+  },
+  "author": "Igor Krimerman",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/imkrimerman/p4-robot/issues"
+  },
+  "homepage": "https://github.com/imkrimerman/p4-robot#readme",
+  "dependencies": {
+    "cross-spawn": "^2.0.0",
+    "lodash": "^3.10.1",
+    "shelljs": "^0.5.3"
+  }
+}
