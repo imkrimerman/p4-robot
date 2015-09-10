@@ -1,10 +1,6 @@
 'use strict';
-var _ = require('lodash'),
-  shell = require('shelljs'),
-  fs = require('fs'),
-  path = require('path'),
-  config = require('./config'),
-  lib = require('./lib');
+var lib = require('./lib'),
+  config = require('./config');
 /***************************************************************************
  *
  * Perforce
@@ -12,11 +8,9 @@ var _ = require('lodash'),
  **************************************************************************/
 module.exports = {
 
-  path: config.paths.p4,
-
-  exists: fs.existsSync(config.paths.p4),
-
   defaultChangelist: config.defaultChangelist,
+
+  exists: lib.exists,
 
   modes: config.modes,
 
@@ -35,16 +29,5 @@ module.exports = {
   isChmod: lib.chmod,
 
   exec: lib.exec,
-
-  isOpened: function(filename) {
-    filename = path.basename(filename);
-    var opened = this.opened();
-    for (var key in opened) {
-      if (path.basename(opened[key]) === filename) return true;
-    }
-    return false;
-  },
-
-
 
 };
