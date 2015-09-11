@@ -8,11 +8,7 @@ var _ = require('lodash'),
  *
  **************************************************************************/
 module.exports = _.extend(lib, {
-
   defaultChangelist: config.defaultChangelist,
-
   exists: lib.exists,
-
   modes: config.modes,
-
 });
