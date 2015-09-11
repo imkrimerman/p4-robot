@@ -17,8 +17,11 @@
   },
   "homepage": "https://github.com/imkrimerman/p4-robot#readme",
   "dependencies": {
+    "chalk": "^1.1.1",
     "cross-spawn": "^2.0.0",
+    "epipebomb": "^0.1.1",
     "lodash": "^3.10.1",
-    "shelljs": "^0.5.3"
+    "shelljs": "^0.5.3",
+    "underscore.string": "^3.2.2"
   }
 }

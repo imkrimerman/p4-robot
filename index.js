@@ -1,12 +1,13 @@
 'use strict';
-var lib = require('./lib'),
+var _ = require('lodash'),
+  lib = require('./lib'),
   config = require('./config');
 /***************************************************************************
  *
  * Perforce
  *
  **************************************************************************/
-module.exports = {
+module.exports = _.extend(lib, {
 
   defaultChangelist: config.defaultChangelist,
 
@@ -14,20 +15,4 @@ module.exports = {
 
   modes: config.modes,
 
-  add: lib.add,
-
-  edit: lib.edit,
-
-  reopen: lib.reopen,
-
-  revert: lib.revert,
-
-  unlock: lib.unlock,
-
-  opened: lib.opened,
-
-  isChmod: lib.chmod,
-
-  exec: lib.exec,
-
-};
+});
