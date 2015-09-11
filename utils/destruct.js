@@ -9,14 +9,24 @@ var _ = require('lodash'),
  **************************************************************************/
 module.exports = function destructArray (part, splitter) {
   splitter = val(splitter, ':');
-  part = part.split(splitter);
+  var destructed = part.split(splitter),
+    clean = str.clean,
+    key,
+    value;
+
+  if (_.isEmpty(destructed)) {
+    throw 'Destruct Error in: ' + part + ' with splitter ' + splitter;
+  }
+
+  key = destructed[0];
+  value = destructed[1];
+
+  if (destructed.length > 2) {
+    value += splitter + destructed.slice(2, destructed.length).join(splitter);
+  }
+
   return {
-    key: clean(part[0]),
-    value: clean(part[1])
+    key: clean(key),
+    value: clean(value)
   }
 }
-
-function clean(value) {
-  return str.clean(value).replace("\n", '').replace("\t", '');
-}
-
