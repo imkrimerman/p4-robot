@@ -3,7 +3,7 @@ var _ = require('lodash')
   , shell = require('shelljs')
   , spawn = require('cross-spawn')
   , val = require('im.val')
-  , shellMethods = _.omit(shell, ['exec', 'popd', 'pushd'])
+  , shellMethods = _.omit(shell, ['exec'])
   , exec = shell.exec;
 /***************************************************************************
  *
@@ -18,25 +18,24 @@ module.exports = _.extend(shellMethods, {
   executers: ['shell', 'spawn'],
 
   /**
-   * Returns executer by options
+   * Returns executor by options
    * @param {String} cmd
    * @param {Object} options
    * @returns {*}
    */
-  executer: function(cmd, options) {
-    options = _.defaults(val(options, {}), this.config.shell);
-    var executer;
-    if (options.executer) {
-      if (! _.contains(this.executers, options.executer)) {
-        throw 'Unknown executer: ' + options.executer;
+  executor: function(cmd, options) {
+    var executor;
+    if (options.executor) {
+      if (! _.contains(this.executers, options.executor)) {
+        throw 'Unknown executor: ' + options.executor;
       }
-      executer = options.executer;
+      executor = options.executor;
     }
-    else if (options.async) executer = 'spawn';
-    else if (options.sync) executer = 'shell';
-    else executer = this.executer(cmd, this.config.exec);
+    else if (options.async) executor = 'spawn';
+    else if (options.sync) executor = 'shell';
+    else executor = this.executor(cmd, this.config.exec);
     // exec command with options
-    return this.__execute(executer, cmd, options);
+    return this.__execute(executor, cmd, options);
   },
 
   /**
@@ -88,6 +87,7 @@ module.exports = _.extend(shellMethods, {
       return spawn(command.cmd, command.args, options);
     }
     delete options.sync;
+    options = _.defaults(val(options, {}), this.config);
     return exec(command, options);
   },
 

@@ -6,6 +6,7 @@ var val = require('im.val')
   , utils = require('./utils')
   , log = require('./utils/log')
   , EventClass = utils.Classes.EventClass;
+require('epipebomb')();
 /***************************************************************************
  *
  * Perforce
@@ -30,7 +31,7 @@ module.exports = EventClass.extend(Prototype({
  */
 function Prototype(proto) {
   _.extend(utils, {val: val});
-  delete utils.class;
+  delete utils.Classes;
   _.extend(proto, core, {$: utils});
   return proto;
 };

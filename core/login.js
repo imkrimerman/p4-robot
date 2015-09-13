@@ -1,6 +1,7 @@
 'use strict'
-var val = require('im.val');
-require('epipebomb')();
+var val = require('im.val')
+  , str = require('underscore.string')
+  , _ = require('lodash');
 /***************************************************************************
  *
  * Login
@@ -13,23 +14,70 @@ require('epipebomb')();
  */
 module.exports = function(password, suppressLog) {
   suppressLog = val(suppressLog, false);
-  var self = this;
   // execute command async and get process child
-  var child = this.exec('login', { async: true, executer: 'shell' });
-  // set error handler
-  child.stdout.on('error', function(err) {
-    if (! suppressLog) {
-      self.log.warn('Whoops, something went wrong...');
-      self.log.error(err.message);
-    }
-  });
+  var child = this.exec('login', { executor: 'shell', async: true, silent: true })
+    , self = this;
+  if (! child) return;
+  setErrorHandlers(this, child, suppressLog);
   // on password question send password
-  child.stdout.on('data', function() {
+  child.stdout.on('data', function (data) {
     if (! suppressLog) {
-      self.log.info('Logging in...');
+      if (str.contains(data, 'password')) {
+        self.log.info('Logging in...');
+      }
+      else self.log.info(str.clean(data));
     }
     child.stdin.setEncoding('utf-8');
     child.stdin.write(password + "\n");
     self.$$fire('login');
   });
 };
+
+/**
+ * Sets IO error handlers
+ * @param self
+ * @param child
+ * @param suppressLog
+ */
+function setErrorHandlers (self, child, suppressLog) {
+  _.each(['stdin', 'stdout'], function(io) {
+    require('epipebomb')(child[io], process.exit);
+    child[io].on('error', onError(self, io, suppressLog));
+  });
+}
+
+/**
+ * IO error handler
+ * @param self
+ * @param process
+ * @param io
+ * @param suppressLog
+ * @returns {Function}
+ */
+function onError (self, io, suppressLog) {
+  return function(err) {
+    if (! suppressLog) {
+      self.log.warn(str.capitalize(io) + ': Whoops, something went wrong...');
+      self.log.error(err.message);
+    }
+  }
+}
+
+/**
+ * On data callback
+ * @param self
+ * @param process
+ * @param password
+ * @param suppressLog
+ * @returns {Function}
+ */
+function onData (self, process, password, suppressLog) {
+  return function() {
+    if (! suppressLog) {
+      self.log.info('Logging in...');
+    }
+    process.stdin.setEncoding('utf-8');
+    process.stdin.write(password + "\n");
+    self.$$fire('login');
+  }
+}
