@@ -60,7 +60,7 @@ module.exports = _.extend(shellMethods, {
         delete options.sync;
         spawn = spawn.sync;
       }
-      return spawn(command.cmd, command.args, options)
+      return spawn(command.cmd, command.args, options);
     }
     delete options.sync;
     return exec(command, options);
@@ -73,10 +73,13 @@ module.exports = _.extend(shellMethods, {
    * @private
    */
   _execToSpawnCmd: function(command) {
-    command = command.split(' ');
+    var split = command.split(' ');
+    if (! split.length) {
+      throw 'Can\'t convert command:' + command + ' to spawn command format';
+    }
     return {
-      cmd: command.shift(),
-      args: command
+      cmd: split.shift(),
+      args: split
     };
   },
 

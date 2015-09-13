@@ -12,6 +12,10 @@
   "bugs": {
     "url": "https://github.com/imkrimerman/p4-robot/issues"
   },
+  "keywords": [
+    "perforce",
+    "p4"
+  ],
   "homepage": "https://github.com/imkrimerman/p4-robot#readme",
   "dependencies": {
     "chalk": "^1.1.1",

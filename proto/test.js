@@ -3,15 +3,20 @@ var shell = require('shelljs'),
   str = require('underscore.string');
 /***************************************************************************
  *
- * Tests Perforce
+ * Test
  *
  **************************************************************************/
+/**
+ * Tests Perforce for errors
+ * @returns {boolean}
+ */
 module.exports = function() {
   try {
-    var out = shell.exec('p4', {silent: true}).output;
+    var out = shell.exec('p4', { silent: true }).output;
     if (str.contains(out, 'error')) return false;
     return true;
-  } catch (e) {
+  }
+  catch (e) {
     return false;
   }
 };

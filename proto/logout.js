@@ -1,11 +1,14 @@
 'use strict'
-var which = require('shelljs').which,
-  config = require('../config');
+var exec = require('./exec');
 /***************************************************************************
  *
- * Checks if Perforce Command Line Tools exists
+ * Logout
  *
  **************************************************************************/
+/**
+ * Logs out from Perforce
+ * @returns {*}
+ */
 module.exports = function() {
-  return !! which(config.paths.p4);
+  return exec('logout');
 };

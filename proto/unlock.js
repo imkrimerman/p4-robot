@@ -2,22 +2,28 @@
 var shell = require('../utils/shell'),
   nodePath = require('path'),
   exec = require('./exec'),
-  val = require('../utils/val'),
-  config = require('../config');
+  val = require('../utils/val');
 /***************************************************************************
  *
- * Release the lock on a file.
+ * Unlock
  *
  **************************************************************************/
+/**
+ * Release the lock on a file.
+ * @param {String} path
+ * @param {String} changelist
+ * @returns {*}
+ */
 module.exports = function(path, changelist) {
-  changelist = val(changelist, config.defaultChangelist);
+  changelist = val(changelist, this.config.defaultChangelist);
   return exec('unlock -c ' + changelist + ' ' + path);
 };
 
 /**
- * Release the lock using OS chmod.
- * @param path
+ * Release the lock on file using OS file permissions.
+ * @param {String} path
+ * @returns {*}
  */
 module.exports.dirty = function(path) {
-  shell.chmod('u+w ' + nodePath.join(process.cwd(), path));
+  return shell.chmod('u+w ' + nodePath.join(process.cwd(), path));
 }

@@ -1,14 +1,15 @@
 'use strict';
 var _ = require('lodash'),
-  lib = require('./lib'),
+  proto = require('./proto'),
   config = require('./config');
 /***************************************************************************
  *
  * Perforce
  *
  **************************************************************************/
-module.exports = _.extend(lib, {
+module.exports = _.extend(proto, {
+  config: config,
   defaultChangelist: config.defaultChangelist,
-  exists: lib.exists,
+  exists: proto.exists,
   modes: config.modes,
 });

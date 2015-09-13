@@ -3,9 +3,14 @@ var opened = require('./opened'),
   exec = require('./exec');
 /***************************************************************************
  *
- * Revert file
+ * Revert
  *
  **************************************************************************/
+/**
+ * Revert file
+ * @param {String} path
+ * @returns {*}
+ */
 module.exports = function(path) {
   if (opened.is(path)) {
     return exec('revert ' + path);
