@@ -1,6 +1,5 @@
 'use strict'
-var shell = require('shelljs'),
-  str = require('underscore.string');
+var str = require('underscore.string');
 /***************************************************************************
  *
  * Test
@@ -12,7 +11,7 @@ var shell = require('shelljs'),
  */
 module.exports = function() {
   try {
-    var out = shell.exec('p4', { silent: true }).output;
+    var out = this.$.shell.execute('p4', { silent: true }).output;
     if (str.contains(out, 'error')) return false;
     return true;
   }

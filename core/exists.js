@@ -1,5 +1,5 @@
 'use strict'
-var which = require('shelljs').which;
+var _ = require('lodash');
 /***************************************************************************
  *
  * Exists
@@ -10,5 +10,5 @@ var which = require('shelljs').which;
  * @returns {boolean}
  */
 module.exports = function() {
-  return ! ! which(this.config.paths.p4);
+  return _.isString(this.$.shell.which('p4'));
 };

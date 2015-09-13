@@ -1,9 +1,7 @@
 'use strict'
-var exec = require('./exec'),
-  _ = require('lodash'),
-  destruct = require('../utils/destruct'),
-  str = require('underscore.string'),
-  val = require('../utils/val');
+var _ = require('lodash')
+  , str = require('underscore.string')
+  , val = require('im.val');
 /***************************************************************************
  *
  * Client
@@ -19,11 +17,11 @@ var exec = require('./exec'),
 module.exports = function(viewsAsObject) {
   viewsAsObject = val(viewsAsObject, true);
   // execute client command and prepare output
-  var out = prepareOutput(exec('client -o').output),
-    client = {};
+  var out = prepareOutput(this.exec('client -o').output)
+    , client = {};
   // destruct each key in output and set to client
   for (var key in out) {
-    var part = destruct(out[key]);
+    var part = this.$.destruct(out[key]);
     client[part.key] = part.value;
   }
   // format client Views if has any
@@ -36,7 +34,7 @@ module.exports = function(viewsAsObject) {
     if (viewsAsObject) {
       var View = {};
       for (var key in client.View) {
-        var dest = destruct(client.View[key], ' ');
+        var dest = this.$.destruct(client.View[key], ' ');
         View[dest.key] = dest.value;
       }
       client.View = View;
@@ -46,6 +44,8 @@ module.exports = function(viewsAsObject) {
   if (_.has(client, 'ChangeView')) client.ChangeView = split(client.ChangeView);
   if (_.has(client, 'Options')) client.Options = split(client.Options, ' ');
   if (_.has(client, 'SubmitOptions')) client.SubmitOptions = split(client.SubmitOptions, ' ');
+
+  this.$$fire('client', client);
 
   return client;
 };

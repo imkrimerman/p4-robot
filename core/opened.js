@@ -1,10 +1,8 @@
 'use strict'
-var exec = require('./exec'),
-  val = require('../utils/val'),
-  destruct = require('../utils/destruct'),
-  _ = require('lodash'),
-  str = require('underscore.string'),
-  nodePath = require('path');
+var val = require('im.val')
+  , _ = require('lodash')
+  , str = require('underscore.string')
+  , nodePath = require('path');
 /***************************************************************************
  *
  * Opened
@@ -16,9 +14,9 @@ var exec = require('./exec'),
  * @returns {Array}
  */
 module.exports = function(options) {
-  var cmdOptions = optionsToCommand(val(options, {}));
-  var out = prepareOutput(exec('opened' + cmdOptions).output),
-    opened = [];
+  var cmdOptions = optionsToCommand(val(options, {}))
+    , out = prepareOutput(this.exec('opened' + cmdOptions).output)
+    , opened = [];
 
   if (_.isEmpty(out)) return opened;
 
@@ -26,6 +24,7 @@ module.exports = function(options) {
     var isShort = _.has(options, 'short') ? options.short : false;
     opened.push(meta(out[key], isShort));
   }
+  this.$$fire('opened', {opened: opened, options: options});
   return opened;
 };
 
@@ -35,9 +34,9 @@ module.exports = function(options) {
  * @returns {*}
  */
 module.exports.local = function(options) {
-  var opened = module.exports(options),
-    client = require('./client')(),
-    root = client.Root;
+  var opened = module.exports(options)
+    , client = require('./client')()
+    , root = client.Root;
 
   for (var key in opened) {
     for (var viewKey in client.View) {
@@ -52,6 +51,7 @@ module.exports.local = function(options) {
       }
     }
   }
+  this.$$fire('opened', {opened: opened, options: options});
   return opened;
 }
 
@@ -64,8 +64,8 @@ module.exports.local = function(options) {
 module.exports.is = function(path, isLocal) {
   path = nodePath.isAbsolute(path) ? path : nodePath.join(process.cwd(), path);
   isLocal = val(isLocal, true);
-  var opened = isLocal ? module.exports.local() : module.exports(),
-    isOpened = _.findWhere(opened, { path: path });
+  var opened = isLocal ? module.exports.local() : module.exports()
+    , isOpened = _.findWhere(opened, { path: path });
   return _.isUndefined(isOpened) ? false : true;
 };
 
@@ -77,10 +77,10 @@ module.exports.is = function(path, isLocal) {
  */
 function meta (data, isShort) {
   if (isShort) return metaShort(data);
-  data = destruct(data, '#');
-  var path = data.key,
-    revision = data.value[0],
-    meta = data.value.replace(revision + ' - ', '');
+  data = this.destruct(data, '#');
+  var path = data.key
+    , revision = data.value[0]
+    , meta = data.value.replace(revision + ' - ', '');
   // get meta data
   meta = splitMeta(meta);
   return {
@@ -98,9 +98,9 @@ function meta (data, isShort) {
  * @returns {Object}
  */
 function metaShort (data) {
-  data = destruct(data, ' - ');
-  var path = data.key,
-    meta = splitMeta(data.value);
+  data = this.destruct(data, ' - ');
+  var path = data.key
+    , meta = splitMeta(data.value);
 
   return {
     path: path,
@@ -116,9 +116,9 @@ function metaShort (data) {
  */
 function splitMeta (meta) {
   meta = meta.split(' ');
-  var mode = _.first(meta),
-    type = _.last(meta),
-    changelist;
+  var mode = _.first(meta)
+    , type = _.last(meta)
+    , changelist;
 
   if (meta[1] === 'change') changelist = meta[2];
   else changelist = meta[1];

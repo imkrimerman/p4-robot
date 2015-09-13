@@ -1,10 +1,10 @@
 'use strict';
-var _ = require('lodash'),
-  shell = require('shelljs'),
-  spawn = require('cross-spawn'),
-  val = require('./val'),
-  shellMethods = _.omit(shell, ['exec', 'popd', 'pushd']),
-  exec = shell.exec;
+var _ = require('lodash')
+  , shell = require('shelljs')
+  , spawn = require('cross-spawn')
+  , val = require('im.val')
+  , shellMethods = _.omit(shell, ['exec', 'popd', 'pushd'])
+  , exec = shell.exec;
 /***************************************************************************
  *
  * Shell
@@ -13,13 +13,40 @@ var _ = require('lodash'),
 module.exports = _.extend(shellMethods, {
 
   /**
+   * Available executers
+   */
+  executers: ['shell', 'spawn'],
+
+  /**
+   * Returns executer by options
+   * @param {String} cmd
+   * @param {Object} options
+   * @returns {*}
+   */
+  executer: function(cmd, options) {
+    options = _.defaults(val(options, {}), this.config.shell);
+    var executer;
+    if (options.executer) {
+      if (! _.contains(this.executers, options.executer)) {
+        throw 'Unknown executer: ' + options.executer;
+      }
+      executer = options.executer;
+    }
+    else if (options.async) executer = 'spawn';
+    else if (options.sync) executer = 'shell';
+    else executer = this.executer(cmd, this.config.exec);
+    // exec command with options
+    return this.__execute(executer, cmd, options);
+  },
+
+  /**
    * Execute command sync
    * @param {String} command
    * @param {boolean|undefined} options
    * @returns {*}
    */
   execute: function(command, options) {
-    return this._execute('shell', command, options);
+    return this.__execute('shell', command, options);
   },
 
   /**
@@ -29,7 +56,7 @@ module.exports = _.extend(shellMethods, {
    * @returns {*}
    */
   spawnSync: function(command, options) {
-    return this._execute('spawn', command, options);
+    return this.__execute('spawn', command, options);
   },
 
   /**
@@ -40,26 +67,24 @@ module.exports = _.extend(shellMethods, {
    */
   spawn: function(command, options) {
     options = _.extend(val(options, {}), { sync: false });
-    return this._execute('spawn', command, options);
+    return this.__execute('spawn', command, options);
   },
 
   /**
    * Execute command
    * @param {String} method
    * @param {String} command
-   * @param {Object|undefined} options
+   * @param {Object} options
    * @returns {*}
    * @private
    */
-  _execute: function(method, command, options) {
-    options = _.defaults(val(options, {}), { sync: true });
+  __execute: function(method, command, options) {
     if (method === 'spawn') {
       options = _.defaults(options, { stdio: 'inherit' });
       command = this._execToSpawnCmd(command);
-      if (options.sync) {
-        delete options.sync;
-        spawn = spawn.sync;
-      }
+      if (options.sync) spawn = spawn.sync;
+      delete options.sync;
+      delete options.async;
       return spawn(command.cmd, command.args, options);
     }
     delete options.sync;
@@ -82,5 +107,4 @@ module.exports = _.extend(shellMethods, {
       args: split
     };
   },
-
 });

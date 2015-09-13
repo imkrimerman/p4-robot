@@ -1,6 +1,4 @@
 'use strict'
-var opened = require('./opened'),
-  exec = require('./exec');
 /***************************************************************************
  *
  * Revert
@@ -12,8 +10,9 @@ var opened = require('./opened'),
  * @returns {*}
  */
 module.exports = function(path) {
-  if (opened.is(path)) {
-    return exec('revert ' + path);
+  if (this.opened.is(path)) {
+    this.$$fire('revert', {path: path});
+    return this.exec('revert ' + path);
   }
   return false;
 };

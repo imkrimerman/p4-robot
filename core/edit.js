@@ -1,20 +1,20 @@
 'use strict'
-var opened = require('./opened'),
-  exec = require('./exec');
 /***************************************************************************
  *
- * Reopen
+ * Edit
  *
  **************************************************************************/
 /**
- * Reopen file
+ * Opens file in edit mode
  * @param {String} path
  * @param {String} changelist
- * @returns {*}
+ * @returns {Object|boolean}
  */
 module.exports = function(path, changelist) {
-  if (opened.is(path)) {
-    return exec('reopen -c ' + changelist + ' ' + path);
+  // open file in edit mode only if it's not opened yet
+  if (! this.opened.is(path)) {
+    this.$$fire('edit', { path: path, changelist: changelist });
+    return this.exec('edit -c ' + changelist + ' ' + path);
   }
   return false;
 };

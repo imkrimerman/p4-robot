@@ -38,15 +38,20 @@ module.exports = {
   },
 
   /**
+   * Shell default execute mode synchronous/asynchronous
+   * This config will be used if p4.exec method will be triggered
+   * without options
+   */
+  exec: {
+    sync: true, // Or async: true
+  },
+
+  /**
    * Command execute settings
    * This object configures shelljs module, that is used to trigger commands
    * @see https://github.com/shelljs/shelljs
    */
-  exec: {
-    /**
-     * Execute commands synchronous
-     */
-    sync: true,
+  shell: {
     /**
      * Suppresses all command output if true, except for echo() calls. Default is false.
      */

@@ -1,14 +1,12 @@
 'use strict'
-var exec = require('./exec');
 /***************************************************************************
  *
- * Logout
+ * Utils
  *
  **************************************************************************/
-/**
- * Logs out from Perforce
- * @returns {*}
- */
-module.exports = function() {
-  return exec('logout');
+module.exports = {
+  destruct: require('./destruct'),
+  error: require('./error'),
+  shell: require('./shell'),
+  Classes: require('./classes'),
 };

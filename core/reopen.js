@@ -1,21 +1,19 @@
 'use strict'
-var opened = require('./opened'),
-  exec = require('./exec');
 /***************************************************************************
  *
- * Opens file in add mode
+ * Reopen
  *
  **************************************************************************/
 /**
- * Opens file in add mode
+ * Reopen file
  * @param {String} path
  * @param {String} changelist
- * @returns {Object|boolean}
+ * @returns {*}
  */
 module.exports = function(path, changelist) {
-  // open file in add mode only if it's not opened yet
-  if (! opened.is(path)) {
-    return exec('add -c ' + changelist + ' ' + path);
+  if (this.opened.is(path)) {
+    this.$$fire('reopen', {path: path, changelist: changelist});
+    return this.exec('reopen -c ' + changelist + ' ' + path);
   }
   return false;
 };

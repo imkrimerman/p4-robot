@@ -1,8 +1,7 @@
 'use strict'
-var shell = require('../utils/shell'),
-  nodePath = require('path'),
-  exec = require('./exec'),
-  val = require('../utils/val');
+var nodePath = require('path')
+  , val = require('im.val')
+  , shell = require('../utils/shell');
 /***************************************************************************
  *
  * Unlock
@@ -16,7 +15,8 @@ var shell = require('../utils/shell'),
  */
 module.exports = function(path, changelist) {
   changelist = val(changelist, this.config.defaultChangelist);
-  return exec('unlock -c ' + changelist + ' ' + path);
+  this.$$fire('unlock', {path: path, changelist: changelist});
+  return this.exec('unlock -c ' + changelist + ' ' + path);
 };
 
 /**
@@ -25,5 +25,6 @@ module.exports = function(path, changelist) {
  * @returns {*}
  */
 module.exports.dirty = function(path) {
-  return shell.chmod('u+w ' + nodePath.join(process.cwd(), path));
+  path = nodePath.isAbsolute(path) ? path : nodePath.join(process.cwd(), path);
+  return shell.chmod('u+w ', path);
 }

@@ -1,9 +1,13 @@
 'use strict'
 /***************************************************************************
  *
- * Prototype
+ * Perforce Robot Core
  *
  **************************************************************************/
+/**
+ * Perforce Robot prototype
+ * @type {Object}
+ */
 module.exports = {
   add: require('./add'),
   chmod: require('./chmod'),
@@ -16,5 +20,6 @@ module.exports = {
   opened: require('./opened'),
   reopen: require('./reopen'),
   revert: require('./revert'),
+  test: require('./test'),
   unlock: require('./unlock'),
 };

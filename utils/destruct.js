@@ -1,7 +1,7 @@
 'use strict'
-var _ = require('lodash'),
-  val = require('./val'),
-  str = require('underscore.string');
+var _ = require('lodash')
+  , val = require('im.val')
+  , str = require('underscore.string');
 /***************************************************************************
  *
  * Destruct
@@ -16,10 +16,10 @@ var _ = require('lodash'),
 module.exports = function destructArray (part, splitter) {
   // if no splitter then use ':'
   splitter = val(splitter, ':');
-  var destructed = part.split(splitter),
-    clean = str.clean,
-    key,
-    value;
+  var destructed = part.split(splitter)
+    , clean = str.clean
+    , key
+    , value;
 
   if (_.isEmpty(destructed)) {
     throw 'Destruct Error in: ' + part + ' with splitter ' + splitter;

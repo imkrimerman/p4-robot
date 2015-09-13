@@ -1,8 +1,5 @@
 'use strict'
-var add = require('./add'),
-  edit = require('./edit'),
-  unlock = require('./unlock'),
-  val = require('../utils/val');
+var val = require('im.val');
 /***************************************************************************
  *
  * Add or edit
@@ -22,15 +19,15 @@ module.exports = function(path, cb, force) {
   force = val(force, false);
   cb = val(cb, function() {});
   // try to open for edit
-  var result = edit(path);
+  var result = this.edit(path);
   // execute callback
   cb(path);
   // if we didn't open file for edit
   if (! result) {
     // try to add file
-    result = add(path);
+    result = this.add(path);
     // if force then change file permission with OS
-    if (force) unlock.dirty(path);
+    if (force) this.unlock.dirty(path);
   }
   return result;
 };
