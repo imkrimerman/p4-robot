@@ -2,7 +2,8 @@
 var val = require('im.val')
   , _ = require('lodash')
   , str = require('underscore.string')
-  , nodePath = require('path');
+  , nodePath = require('path')
+  , destruct = require('../utils/destruct');
 /***************************************************************************
  *
  * Opened
@@ -11,11 +12,29 @@ var val = require('im.val')
 /**
  * Returns opened files with depot paths
  * @param {Object} options
- * @returns {Array}
+ * @param {Boolean} isLocal
+ * @returns {Array|boolean}
  */
-module.exports = function(options) {
-  var cmdOptions = optionsToCommand(val(options, {}))
-    , out = prepareOutput(this.exec('opened' + cmdOptions).output)
+module.exports = function(options, isLocal) {
+  isLocal = val(isLocal, false);
+  if (_.isString(options)) return is(this, options, isLocal);
+  else options = val(options, {});
+
+  var opened = all(this, options, isLocal);
+  this.$$fire('opened', {opened: opened, options: options, isLocal: isLocal});
+  return opened;
+};
+
+/**
+ * Returns all opened files
+ * @param {Object} self
+ * @param {Object} options
+ * @param {Boolean} isLocal
+ * @return {Array}
+ */
+function all (self, options, isLocal) {
+  var cmdOptions = optionsToCommand(options)
+    , out = prepareOutput(self.exec('opened' + cmdOptions).output)
     , opened = [];
 
   if (_.isEmpty(out)) return opened;
@@ -24,18 +43,18 @@ module.exports = function(options) {
     var isShort = _.has(options, 'short') ? options.short : false;
     opened.push(meta(out[key], isShort));
   }
-  this.$$fire('opened', {opened: opened, options: options});
+  if (isLocal) opened = localize(self, opened);
   return opened;
 };
 
 /**
- * Returns opened files with local paths
- * @param {Object} options
- * @returns {*}
+ * Converts opened files paths from depot to local paths
+ * @param {Object} self
+ * @param {Object} opened
+ * @returns {Object}
  */
-module.exports.local = function(options) {
-  var opened = module.exports(options)
-    , client = require('./client')()
+function localize (self, opened) {
+  var client = self.client()
     , root = client.Root;
 
   for (var key in opened) {
@@ -51,20 +70,20 @@ module.exports.local = function(options) {
       }
     }
   }
-  this.$$fire('opened', {opened: opened, options: options});
   return opened;
 }
 
 /**
  * Check if file is opened
+ * @param {Object} self
  * @param {String} path
  * @param {boolean|undefined} isLocal
  * @returns {boolean}
  */
-module.exports.is = function(path, isLocal) {
+function is (self, path, isLocal) {
   path = nodePath.isAbsolute(path) ? path : nodePath.join(process.cwd(), path);
   isLocal = val(isLocal, true);
-  var opened = isLocal ? module.exports.local() : module.exports()
+  var opened = isLocal ? all(self, {}, true) : all(self)
     , isOpened = _.findWhere(opened, { path: path });
   return _.isUndefined(isOpened) ? false : true;
 };
@@ -77,7 +96,7 @@ module.exports.is = function(path, isLocal) {
  */
 function meta (data, isShort) {
   if (isShort) return metaShort(data);
-  data = this.destruct(data, '#');
+  data = destruct(data, '#');
   var path = data.key
     , revision = data.value[0]
     , meta = data.value.replace(revision + ' - ', '');
@@ -98,7 +117,7 @@ function meta (data, isShort) {
  * @returns {Object}
  */
 function metaShort (data) {
-  data = this.destruct(data, ' - ');
+  data = destruct(data, ' - ');
   var path = data.key
     , meta = splitMeta(data.value);
 

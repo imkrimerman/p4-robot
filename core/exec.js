@@ -17,7 +17,7 @@ module.exports = function(cmd, options) {
   // if p4 executable exists and we are connected then execute
   if (this.exists() && this.test()) {
     var execCmd = 'p4 ' + cmd
-      , output = this.$.shell.executor(execCmd, options)
+      , output = this.$.shell.execute(execCmd, options)
       , event = 'exec:' + cmd;
     this.log.debug(execCmd);
     this.$$fire(event, { cmd: cmd, options: options, output: output });

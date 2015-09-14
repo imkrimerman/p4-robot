@@ -1,5 +1,6 @@
 'use strict'
-var _ = require('lodash');
+var _ = require('lodash')
+  , nodePath = require('path');
 /***************************************************************************
  *
  * Exists
@@ -10,5 +11,6 @@ var _ = require('lodash');
  * @returns {boolean}
  */
 module.exports = function() {
-  return _.isString(this.$.shell.which('p4'));
+  var which = this.$.shell.which('p4');
+  return _.isString(which) && nodePath.isAbsolute(which);
 };

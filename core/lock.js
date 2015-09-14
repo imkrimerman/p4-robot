@@ -11,7 +11,7 @@ var val = require('im.val');
  * @param changelist
  */
 module.exports = function(path, changelist) {
-  if (path && ! this.opened.is(path)) {
+  if (path && ! this.opened(path)) {
     this.log.warn('Can\'t lock not opened file: ' + path);
     return;
   }

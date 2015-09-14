@@ -10,7 +10,7 @@
  * @returns {*}
  */
 module.exports = function(path) {
-  if (this.opened.is(path)) {
+  if (this.opened(path)) {
     this.$$fire('revert', {path: path});
     return this.exec('revert ' + path);
   }

@@ -1,4 +1,5 @@
 'use strict'
+var fs = require('fs');
 /***************************************************************************
  *
  * Compares file mode with provided mode

@@ -20,6 +20,10 @@ module.exports = EventClass.extend(Prototype({
   constructor: function(config) {
     this.config = _.defaults(val(config, {}, _.isObject), globalConfig);
     this.log = new log(this.config.log);
+    this.$.shell.defaults = {
+      exec: this.config.exec,
+      shell: this.config.shell
+    }
   }
 }));
 

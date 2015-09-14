@@ -11,7 +11,7 @@
  * @returns {*}
  */
 module.exports = function(path, changelist) {
-  if (this.opened.is(path)) {
+  if (this.opened(path)) {
     this.$$fire('reopen', {path: path, changelist: changelist});
     return this.exec('reopen -c ' + changelist + ' ' + path);
   }
