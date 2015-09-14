@@ -12,13 +12,15 @@ var val = require('im.val')
  * @param {String} password
  * @param {boolean} suppressLog
  */
-module.exports = function(password, suppressLog) {
+module.exports = function(password, cb, suppressLog) {
+  cb = val(cb, _.noop, _.isFunction);
   suppressLog = val(suppressLog, false);
   // execute command async and get process child
   var child = this.exec('login', { executor: 'shell', async: true, silent: true })
     , self = this;
   if (! child) return;
   setErrorHandlers(this, child, suppressLog);
+  this.once('login', cb);
   // on password question send password
   child.stdout.on('data', function (data) {
     if (! suppressLog) {
@@ -27,9 +29,12 @@ module.exports = function(password, suppressLog) {
       }
       else self.log.info(str.clean(data));
     }
-    child.stdin.setEncoding('utf-8');
-    child.stdin.write(password + "\n");
-    self.$$fire('login');
+    
+    if (str.contains(data, 'password')) {
+      child.stdin.setEncoding('utf-8');
+      child.stdin.write(password + "\n");
+      self.$$fire('login');
+    }
   });
 };
 

@@ -17,6 +17,7 @@ module.exports = {
   exec: require('./exec'),
   exists: require('./exists'),
   login: require('./login'),
+  logout: require('./logout'),
   opened: require('./opened'),
   reopen: require('./reopen'),
   revert: require('./revert'),
