@@ -62,22 +62,3 @@ function onError (self, io, suppressLog) {
     }
   }
 }
-
-/**
- * On data callback
- * @param self
- * @param process
- * @param password
- * @param suppressLog
- * @returns {Function}
- */
-function onData (self, process, password, suppressLog) {
-  return function() {
-    if (! suppressLog) {
-      self.log.info('Logging in...');
-    }
-    process.stdin.setEncoding('utf-8');
-    process.stdin.write(password + "\n");
-    self.$$fire('login');
-  }
-}

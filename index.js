@@ -6,7 +6,6 @@ var val = require('im.val')
   , utils = require('./utils')
   , log = require('./utils/log')
   , EventClass = utils.Classes.EventClass;
-require('epipebomb')();
 /***************************************************************************
  *
  * Perforce
