@@ -27,6 +27,7 @@
     "epipebomb": "^0.1.1",
     "im.val": "^1.0.1",
     "lodash": "^3.10.1",
+    "node-cache": "^3.0.0",
     "shelljs": "^0.5.3",
     "underscore.string": "^3.2.2"
   },

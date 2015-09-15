@@ -16,7 +16,8 @@ var val = require('im.val')
  * @returns {Array|boolean}
  */
 module.exports = function(options, isLocal) {
-  isLocal = val(isLocal, false);
+  isLocal = val(isLocal, true);
+
   if (_.isString(options)) return is(this, options, isLocal);
   else options = val(options, {});
 
@@ -34,8 +35,20 @@ module.exports = function(options, isLocal) {
  */
 function all (self, options, isLocal) {
   var cmdOptions = optionsToCommand(options)
-    , out = prepareOutput(self.exec('opened' + cmdOptions).output)
+    , strIsLocal = isLocal ? 'true' : 'false'
+    , cacheKey = 'all:' + strIsLocal + ':' + cmdOptions
+    , cached = self.__cache.get(cacheKey)
+    , isCached = cached && self.config.cache.state
+    , out
     , opened = [];
+
+  if (isCached) {
+    self.log.debug('Taking [opened] from cache...');
+    return cached;
+  }
+  else {
+    out = prepareOutput(self.exec('opened' + cmdOptions).output);
+  }
 
   if (_.isEmpty(out)) return opened;
 
@@ -43,7 +56,9 @@ function all (self, options, isLocal) {
     var isShort = _.has(options, 'short') ? options.short : false;
     opened.push(meta(out[key], isShort));
   }
+
   if (isLocal) opened = localize(self, opened);
+  if (! isCached) self.__cache.set(cacheKey, opened);
   return opened;
 };
 
@@ -83,7 +98,7 @@ function localize (self, opened) {
 function is (self, path, isLocal) {
   path = nodePath.isAbsolute(path) ? path : nodePath.join(process.cwd(), path);
   isLocal = val(isLocal, true);
-  var opened = isLocal ? all(self, {}, true) : all(self)
+  var opened = all(self, {}, isLocal)
     , isOpened = _.findWhere(opened, { path: path });
   return _.isUndefined(isOpened) ? false : true;
 };

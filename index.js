@@ -5,7 +5,8 @@ var val = require('im.val')
   , core = require('./core')
   , utils = require('./utils')
   , log = require('./utils/log')
-  , EventClass = utils.Classes.EventClass;
+  , EventClass = utils.Classes.EventClass
+  , NodeCache = require('node-cache');
 /***************************************************************************
  *
  * Perforce
@@ -17,9 +18,20 @@ var val = require('im.val')
  * @returns {*}
  */
 module.exports = EventClass.extend(Prototype({
+
+  /**
+   * Constructor
+   * @param config
+   */
   constructor: function(config) {
     this.config = _.defaults(val(config, {}, _.isObject), globalConfig);
     this.log = new log(this.config.log);
+
+    this.__cache = new NodeCache({
+      stdTTL: this.config.cache.life,
+      checkperiod: this.config.cache.checkPeriod
+    });
+
     this.$.shell.defaults = {
       exec: this.config.exec,
       shell: this.config.shell

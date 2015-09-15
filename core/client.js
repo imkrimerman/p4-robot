@@ -16,6 +16,16 @@ var _ = require('lodash')
  */
 module.exports = function(viewsAsObject) {
   viewsAsObject = val(viewsAsObject, true);
+  var strViewAsObject = viewsAsObject ? 'true' : 'false'
+    , cacheKey = 'client:' + strViewAsObject
+    , cached = this.__cache.get(cacheKey)
+    , isCached = cached && this.config.cache.state;
+
+  if (isCached) {
+    this.log.debug('Taking [client] from cache...');
+    return cached;
+  }
+
   // execute client command and prepare output
   var out = prepareOutput(this.exec('client -o').output)
     , client = {};
@@ -46,7 +56,8 @@ module.exports = function(viewsAsObject) {
   if (_.has(client, 'SubmitOptions')) client.SubmitOptions = split(client.SubmitOptions, ' ');
 
   this.$$fire('client', client);
-
+  if (! isCached) this.__cache.set(cacheKey, client);
+  
   return client;
 };
 

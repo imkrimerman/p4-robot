@@ -11,11 +11,13 @@ var _ = require('lodash')
  * Execute Perforce command
  * @param {String} cmd
  * @param {Object} options
+ * @param {Object} testOptions
  * @returns {*}
  */
-module.exports = function(cmd, options) {
+module.exports = function(cmd, options, testOptions) {
+  testOptions = val(testOptions, {});
   // if p4 executable exists and we are connected then execute
-  if (this.exists() && this.test()) {
+  if (this.exists() && this.test(testOptions)) {
     var execCmd = 'p4 ' + cmd
       , output = this.$.shell.execute(execCmd, options)
       , event = 'exec:' + cmd;

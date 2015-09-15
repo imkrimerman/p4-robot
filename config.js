@@ -23,6 +23,29 @@ module.exports = {
   defaultChangelist: 'default',
 
   /**
+   * Cache settings
+   */
+  cache: {
+
+    /**
+     * Enable/Disable cache
+     */
+    state: true,
+
+    /**
+     * The standard life timer as number in seconds for every generated cache element.
+     * 0 = unlimited
+     */
+    life: 1000,
+
+    /**
+     * The period in seconds, as a number, used for the automatic delete check interval.
+     * 0 = no periodic check.
+     */
+    checkPeriod: 1200
+  },
+
+  /**
    * Node JS file modes map
    */
   modes: {

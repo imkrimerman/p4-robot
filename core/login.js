@@ -15,27 +15,52 @@ var val = require('im.val')
 module.exports = function(password, cb, suppressLog) {
   cb = val(cb, _.noop, _.isFunction);
   suppressLog = val(suppressLog, false);
+  if (_.isObject(password)) return login(this, password);
   // execute command async and get process child
-  var child = this.exec('login', { executor: 'shell', async: true, silent: true })
+  var child = this.exec('login', { async: true, silent: true }, { checkLogin: false })
     , self = this;
   if (! child) return;
   setErrorHandlers(this, child, suppressLog);
   this.once('login', cb);
   // on password question send password
-  child.stdout.on('data', function (data) {
+  child.stdout.once('data', function () {
     if (! suppressLog) {
-      if (str.contains(data, 'password')) {
-        self.log.info('Logging in...');
-      }
-      else self.log.info(str.clean(data));
+      self.log.info('Logging in...');
     }
-    
-    if (str.contains(data, 'password')) {
-      child.stdin.setEncoding('utf-8');
-      child.stdin.write(password + "\n");
-      self.$$fire('login');
-    }
+    child.stdin.setEncoding('utf-8');
+    child.stdin.write(password + "\n");
+    self.$$fire('login');
   });
+};
+
+/**
+ * Execute login with options
+ * @param self
+ * @param options
+ * @returns {*|{sync}|Array|{index: number, input: string}}
+ */
+function login (self, options) {
+  var out = self.exec('login' + optionsToCmd(options));
+  self.$$fire('login', {self: self, options: options, output: out});
+  return out;
+};
+
+/**
+ * Convert options Object to string
+ * @param {Object} options
+ * @returns {*}
+ */
+function optionsToCmd (options) {
+  if (! _.isObject(options)) return '';
+  var cmd = [];
+  for (var key in options) {
+    if (key === 'all') cmd.push('-a');
+    if (key === 'host') cmd.push('-h ' + options[key]);
+    if (key === 'display') cmd.push('-p');
+    if (key === 'status') cmd.push('-s');
+  }
+  if (_.isEmpty(cmd)) return '';
+  return ' ' + cmd.join(' ');
 };
 
 /**
