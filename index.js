@@ -29,7 +29,7 @@ module.exports = EventClass.extend(Prototype({
 
     this.__cache = new NodeCache({
       stdTTL: this.config.cache.life,
-      checkperiod: this.config.cache.checkPeriod
+      checkperiod: 0
     });
 
     this.$.shell.defaults = {

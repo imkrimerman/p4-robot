@@ -37,12 +37,6 @@ module.exports = {
      * 0 = unlimited
      */
     life: 1000,
-
-    /**
-     * The period in seconds, as a number, used for the automatic delete check interval.
-     * 0 = no periodic check.
-     */
-    checkPeriod: 1200
   },
 
   /**
