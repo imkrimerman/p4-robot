@@ -16,6 +16,7 @@ module.exports = function() {
   log.error('Error, possible issues:');
   log.error('1. You don\'t have Perforce Command Line Tools installed');
   log.error('2. Perfoce not connected to the server');
-  log.info('Install from: ' + link + " or fix connection to Perforce server.");
+  log.error('3. You are not logged in');
+  log.info('Install from: ' + link + ", login using p4 login.");
   throw 'Execution error.'
 };
