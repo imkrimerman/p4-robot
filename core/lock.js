@@ -7,17 +7,32 @@ var val = require('im.val');
  **************************************************************************/
 /**
  * Lock an opened file against changelist submission.
- * @param path
- * @param changelist
+ * @param {String} path
+ * @param {String} changelist
+ * @param {Object} execOptions
+ * @returns {Object|ChildProcess}
  */
-module.exports = function(path, changelist) {
-  if (path && ! this.opened(path)) {
+module.exports = function(options, execOptions) {
+  if (! _.has(options, 'path')) {
+    this.log.warn('Path is not specified to [p4 lock]');
+    return;
+  }
+  if (! this.opened(options.path)) {
     this.log.warn('Can\'t lock not opened file: ' + path);
     return;
   }
-  var cmd = 'lock';
-  if (path) cmd += ' ' + path;
-  if (changelist) cmd += ' -c ' + changelist;
-  this.$$fire('lock', {path: path, changelist: changelist});
-  this.exec(cmd);
+  return this.$$exec('lock' + optionsToCmd(options), execOptions, 'lock', { options: options });
+};
+
+/**
+ * Returns options converted to string
+ * @param {Object} options
+ * @returns {*}
+ */
+function optionsToCmd (options) {
+  var cmd = [];
+  if (_.has(options, 'path')) cmd.push(options.path);
+  if (_.has(options, 'changelist')) cmd.push('-c ' + options.changelist);
+  if (_.isEmpty(cmd)) return '';
+  return ' ' + cmd.join(' ');
 };

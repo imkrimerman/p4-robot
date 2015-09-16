@@ -47,16 +47,36 @@ var EventClass_ = EventClass.extend({
   },
 
   /**
-   * Fire event with provided Event Emitter.
-   * @param {EventEmitter} emitter
+   * Fire event.
    * @param {String} event
-   * @param {*} data
-   * @returns {undefined}
+   * @param {*|undefined} data
+   * @returns {Object|ChildProcess}
    */
   $$fire: function(event, data) {
     if (! _.isString(event)) return;
     if (val(data) === val.notDefined) data = this;
     this.emit(event, data);
+  },
+
+  /**
+   * Execute command and fire event with provided Event Emitter.
+   * @param {String} command - Execute command
+   * @param {Object} options - Execute command options
+   * @param {String} event - Event name 'add'
+   * @param {*|undefined} data - Data to fire event with
+   * @returns {Object|ChildProcess}
+   */
+  $$exec: function(command, options, event, data) {
+    if (! _.isFunction(this.exec) || _.isString(command)) return;
+
+    options = val(options, {}, _.isObject);
+    var output = this.exec(command, options);
+
+    data = { command: command, options: options, data: data, output: null };
+    data.output = output;
+
+    this.$$fire(event, data);
+    return output;
   }
 });
 

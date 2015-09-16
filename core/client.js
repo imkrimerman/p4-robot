@@ -12,14 +12,16 @@ var _ = require('lodash')
  * @param {boolean} viewsAsObject - whether create object from Views or leave them as Array.
  *                                  If you have long path, they can be cut by JS, to prevent this
  *                                  set to false. By default is set to true.
+ * @param {Object} execOptions
  * @returns {Object}
  */
-module.exports = function(viewsAsObject) {
+module.exports = function(viewsAsObject, execOptions) {
   viewsAsObject = val(viewsAsObject, true);
   var strViewAsObject = viewsAsObject ? 'true' : 'false'
     , cacheKey = 'client:' + strViewAsObject
     , cached = this.__cache.get(cacheKey)
-    , isCached = cached && this.config.cache.state;
+    , isCached = cached && this.config.cache.state
+    , command = 'client -o';
 
   if (isCached) {
     this.log.debug('Taking [client] from cache...');
@@ -27,7 +29,8 @@ module.exports = function(viewsAsObject) {
   }
 
   // execute client command and prepare output
-  var out = prepareOutput(this.exec('client -o').output)
+  var output = this.$$exec(command, execOptions, 'client', { viewsAsObject: viewsAsObject })
+    , out = prepareOutput(output)
     , client = {};
   // destruct each key in output and set to client
   for (var key in out) {
@@ -55,7 +58,6 @@ module.exports = function(viewsAsObject) {
   if (_.has(client, 'Options')) client.Options = split(client.Options, ' ');
   if (_.has(client, 'SubmitOptions')) client.SubmitOptions = split(client.SubmitOptions, ' ');
 
-  this.$$fire('client', client);
   if (! isCached) this.__cache.set(cacheKey, client);
   
   return client;

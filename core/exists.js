@@ -11,6 +11,8 @@ var _ = require('lodash')
  * @returns {boolean}
  */
 module.exports = function() {
-  var which = this.$.shell.which('p4');
-  return _.isString(which) && nodePath.isAbsolute(which);
+  var which = this.$.shell.which('p4')
+    ,  out = _.isString(which) && nodePath.isAbsolute(which);
+  this.$$fire('which', { command: 'p4', output: out });
+  return out;
 };

@@ -21,6 +21,7 @@ module.exports = {
   opened: require('./opened'),
   reopen: require('./reopen'),
   revert: require('./revert'),
+  sync: require('./sync'),
   test: require('./test'),
   unlock: require('./unlock'),
 };

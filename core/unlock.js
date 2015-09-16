@@ -11,12 +11,13 @@ var nodePath = require('path')
  * Release the lock on a file.
  * @param {String} path
  * @param {String} changelist
+ * @param {Object} execOptions
  * @returns {*}
  */
-module.exports = function(path, changelist) {
+module.exports = function(path, changelist, execOptions) {
   changelist = val(changelist, this.config.defaultChangelist);
-  this.$$fire('unlock', {path: path, changelist: changelist});
-  return this.exec('unlock -c ' + changelist + ' ' + path);
+  var cmd = 'unlock -c ' + changelist + ' ' + path;
+  return this.$$exec(cmd, execOptions, 'unlock', { path: path, changelist: changelist });
 };
 
 /**

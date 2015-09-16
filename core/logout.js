@@ -9,8 +9,7 @@
  * @returns {*}
  */
 module.exports = function() {
-  var out = this.exec('logout');
-  this.$$fire('logout');
+  var out = this.$$exec('logout');
   this.__cache.del('test:true');
   return out;
 };

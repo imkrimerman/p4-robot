@@ -38,7 +38,7 @@ function all (self, options, isLocal) {
     , strIsLocal = isLocal ? 'true' : 'false'
     , cacheKey = 'all:' + strIsLocal + ':' + cmdOptions
     , cached = self.__cache.get(cacheKey)
-    , isCached = cached && self.config.cache.state
+    , isCached = !! cached && self.config.cache.state
     , out
     , opened = [];
 

@@ -18,18 +18,24 @@ module.exports = function(password, cb, suppressLog) {
   if (_.isObject(password)) return login(this, password);
   // execute command async and get process child
   var child = this.exec('login', { async: true, silent: true }, { checkLogin: false })
+    , dataTriggered = 0
     , self = this;
   if (! child) return;
   setErrorHandlers(this, child, suppressLog);
+  // set callback on login event
   this.once('login', cb);
   // on password question send password
-  child.stdout.once('data', function () {
-    if (! suppressLog) {
-      self.log.info('Logging in...');
+  child.stdout.on('data', function (data) {
+    if (! suppressLog) self.log.info('Logging in...');
+    if (++dataTriggered) {
+      child.stdin.setEncoding('utf-8');
+      child.stdin.write(password + "\n");
+      self.$$fire('logging');
     }
-    child.stdin.setEncoding('utf-8');
-    child.stdin.write(password + "\n");
-    self.$$fire('login');
+    if (dataTriggered > 1 && ! suppressLog) {
+      self.log.info(data);
+      self.$$fire('login', { data: data });
+    }
   });
 };
 
