@@ -23,7 +23,6 @@
   "dependencies": {
     "chalk": "^1.1.1",
     "class-extend": "^0.1.1",
-    "cross-spawn": "^2.0.0",
     "epipebomb": "^0.1.1",
     "im.val": "^1.0.1",
     "lodash": "^3.10.1",
