@@ -20,8 +20,7 @@ module.exports = function(viewsAsObject, execOptions) {
   var strViewAsObject = viewsAsObject ? 'true' : 'false'
     , cacheKey = 'client:' + strViewAsObject
     , cached = this.__cache.get(cacheKey)
-    , isCached = cached && this.config.cache.state
-    , command = 'client -o';
+    , isCached = cached && this.config.cache.state;
 
   if (isCached) {
     this.log.debug('Taking [client] from cache...');
@@ -30,11 +29,11 @@ module.exports = function(viewsAsObject, execOptions) {
 
   // execute client command and prepare output
   var Event = this.event('client', {
-      command: command,
+      command: 'client -o',
       options: execOptions,
       data: { viewsAsObject: viewsAsObject }
     })
-    , output = this.$exec(Event)
+    , output = this.$exec(Event).output
     , out = prepareOutput(output)
     , client = {};
   // destruct each key in output and set to client

@@ -26,15 +26,17 @@ module.exports = function(password, cb, suppressLog) {
   this.$after('login', cb);
   // on password question send password
   child.stdout.on('data', function (data) {
-    if (! suppressLog) self.log.info('Logging in...');
-    if (++dataTriggered) {
+    if (++dataTriggered === 1 && ! suppressLog) {
+      self.log.info('Logging in...');
+    }
+    if (dataTriggered === 1) {
       child.stdin.setEncoding('utf-8');
       child.stdin.write(password + "\n");
-      self.$fire(this.event('logging', { output: data }));
+      self.$fire(self.event('logging', { output: data }));
     }
     if (dataTriggered > 1 && ! suppressLog) {
-      self.log.info(data);
-      self.$fire(this.event('login', {
+      self.log.info(str.clean(data));
+      self.$fire(self.event('login', {
         command: 'login',
         output: data
       }));
@@ -49,9 +51,10 @@ module.exports = function(password, cb, suppressLog) {
  * @returns {*|{sync}|Array|{index: number, input: string}}
  */
 function login (self, options) {
-  var out = self.exec('login' + optionsToCmd(options));
-  self.$fire('login', {self: self, options: options, output: out});
-  return out;
+  return self.$exec(self.event('login', {
+    command: 'login' + optionsToCmd(options),
+    data: { options: options }
+  }));
 };
 
 /**

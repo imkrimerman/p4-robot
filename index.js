@@ -41,10 +41,12 @@ module.exports = EventEmitterClass.extend(Prototype({
 
   /**
    * Create event with provided arguments
-   * @returns {Function.apply|*|apply}
+   * @param {String} event
+   * @param {Object} object
+   * @returns {EventClass_}
    */
-  event: function() {
-    return new EventClass.apply(EventClass, arguments)
+  event: function(event, object) {
+    return new EventClass(event, object);
   }
 
 }));

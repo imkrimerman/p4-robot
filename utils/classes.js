@@ -68,7 +68,6 @@ var EventEmitterClass_ = EventEmitterClass.extend({
    */
   $exec: function $exec (Event) {
     if (! _.isFunction(this.exec) || ! this.__isEvent(Event)) return;
-
     var output = this.exec(Event.get('command'), Event.get('options'));
     Event.set('output', output);
 
@@ -129,8 +128,9 @@ var EventClass_ = EventEmitterClass.extend({
    */
   constructor: function(event, object) {
     EventEmitterClass.apply(this);
+    if (_.isEmpty(event) || ! _.isString(event)) throw 'Event Construct Error';
     this.event = event;
-    this.object = this.set(object);
+    this.object = this.__object(object);
   },
 
   /**
@@ -151,7 +151,7 @@ var EventClass_ = EventEmitterClass.extend({
    * @returns {Object|undefined}
    */
   get: function(key) {
-    if (val(key, false) && _.has(this.object, key)) {
+    if (val(key, false, _.isString) && this.has(key)) {
       return _.get(this.object, key);
     }
     return this.object;
