@@ -29,7 +29,12 @@ module.exports = function(viewsAsObject, execOptions) {
   }
 
   // execute client command and prepare output
-  var output = this.$exec(command, execOptions, 'client', { viewsAsObject: viewsAsObject })
+  var Event = this.event('client', {
+      command: command,
+      options: execOptions,
+      data: { viewsAsObject: viewsAsObject }
+    })
+    , output = this.$exec(Event)
     , out = prepareOutput(output)
     , client = {};
   // destruct each key in output and set to client

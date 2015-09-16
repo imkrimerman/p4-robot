@@ -16,8 +16,11 @@ var nodePath = require('path')
  */
 module.exports = function(path, changelist, execOptions) {
   changelist = val(changelist, this.config.defaultChangelist);
-  var cmd = 'unlock -c ' + changelist + ' ' + path;
-  return this.$exec(cmd, execOptions, 'unlock', { path: path, changelist: changelist });
+  return this.$exec(this.event('unlock', {
+    command: 'unlock -c ' + changelist + ' ' + path,
+    options: execOptions,
+    data: { path: path, changelist: changelist }
+  }));
 };
 
 /**

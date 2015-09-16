@@ -12,9 +12,12 @@
  */
 module.exports = function(options, execOptions) {
   options = optionsToCommand(options);
-  return this.$exec('submit' + options, execOptions, 'submit', { options: options });
+  return this.$exec(this.event('submit', {
+    command: 'submit ' + optionsToCommand(options),
+    options: execOptions,
+    data: { options: options }
+  }));
 };
-
 
 /**
  * Returns converted options to string

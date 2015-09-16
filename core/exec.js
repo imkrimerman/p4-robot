@@ -22,7 +22,7 @@ module.exports = function(cmd, options, testOptions) {
       , output = this.$.shell.execute(execCmd, options)
       , event = 'exec:' + cmd;
     this.log.debug(execCmd);
-    this.$fire(event, { cmd: cmd, options: options, output: output });
+    this.$fire(this.event(event, { command: cmd, options: options, output: output }));
     return output;
   }
   // if p4 executable not exists or we got errors while testing p4

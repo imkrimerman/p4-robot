@@ -30,11 +30,14 @@ module.exports = function(password, cb, suppressLog) {
     if (++dataTriggered) {
       child.stdin.setEncoding('utf-8');
       child.stdin.write(password + "\n");
-      self.$fire('logging', { command: 'login', options: {}, output: data });
+      self.$fire(this.event('logging', { output: data }));
     }
     if (dataTriggered > 1 && ! suppressLog) {
       self.log.info(data);
-      self.$fire('login', { command: 'login', options: {}, output: data });
+      self.$fire(this.event('login', {
+        command: 'login',
+        output: data
+      }));
     }
   });
 };

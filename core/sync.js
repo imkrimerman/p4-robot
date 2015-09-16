@@ -42,8 +42,11 @@ var _ = require('lodash');
  * @returns {Object}
  */
 module.exports = function(options, execOptions) {
-  options = optionsToCommand(options);
-  return this.$exec('sync' + options, execOptions, 'sync', { options: options });
+  return this.$exec(this.event('sync', {
+    command: 'sync' + optionsToCommand(options),
+    options: execOptions,
+    data: {options: options}
+  }));
 };
 
 /**

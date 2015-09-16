@@ -16,7 +16,11 @@ module.exports = function(path, chmod) {
   var stat = fs.statSync(path);
   if (stat && stat.mode) {
     var result = this.config.modes[stat.mode] === chmod;
-    this.$fire('chmod', { path: path, chmod: chmod, result: result });
+    'chmod', { path: path, chmod: chmod, result: result }
+    this.$fire(this.event('chmod', {
+      output: result,
+      data: { path: path, chmod: chmod }
+    }));
     return result;
   }
   return false;

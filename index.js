@@ -5,6 +5,7 @@ var val = require('im.val')
   , core = require('./core')
   , utils = require('./utils')
   , log = require('./utils/log')
+  , EventEmitterClass = utils.Classes.EventEmitterClass
   , EventClass = utils.Classes.EventClass
   , NodeCache = require('node-cache');
 /***************************************************************************
@@ -17,7 +18,7 @@ var val = require('im.val')
  * @param {Object} config
  * @returns {*}
  */
-module.exports = EventClass.extend(Prototype({
+module.exports = EventEmitterClass.extend(Prototype({
 
   /**
    * Constructor
@@ -36,7 +37,16 @@ module.exports = EventClass.extend(Prototype({
       exec: this.config.exec,
       shell: this.config.shell
     }
+  },
+
+  /**
+   * Create event with provided arguments
+   * @returns {Function.apply|*|apply}
+   */
+  event: function() {
+    return new EventClass.apply(EventClass, arguments)
   }
+
 }));
 
 /**
@@ -45,8 +55,8 @@ module.exports = EventClass.extend(Prototype({
  * @returns {Object}
  */
 function Prototype(proto) {
-  _.extend(utils, {val: val});
-  delete utils.Classes;
-  _.extend(proto, core, {$: utils});
+  var $ = _.extend({}, utils, {val: val});
+  delete $.Classes;
+  _.extend(proto, core, {$: $});
   return proto;
 };

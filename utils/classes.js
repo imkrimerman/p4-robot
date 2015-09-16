@@ -2,8 +2,7 @@
 var EventEmitter = require('events').EventEmitter
   , val = require('im.val')
   , extend = require('class-extend').extend
-  , _ = require('lodash')
-  , BaseEvent = require('./event');
+  , _ = require('lodash');
 /***************************************************************************
  *
  * Classes
@@ -16,47 +15,36 @@ var EventEmitter = require('events').EventEmitter
 function Class () {};
 
 /**
- * EventClass
+ * EventEmitterClass
  * @constructor
  */
-function EventClass () {
+function EventEmitterClass () {
   EventEmitter.call(this);
 };
 
 /**
- * Extend EventClass prototype from EventEmitter prototype
+ * Extend EventEmitterClass prototype from EventEmitter prototype
  */
-_.extend(EventClass.prototype, EventEmitter.prototype);
+_.extend(EventEmitterClass.prototype, EventEmitter.prototype);
 
 /**
  * Inheritance method
  */
-Class.extend = EventClass.extend = extend;
+Class.extend = EventEmitterClass.extend = extend;
+
 
 /**
- * Alias for EventEmitter 'on' method.
- * @param {String} event
- * @param {Function} cb
- * @returns {EventClass}
+ * Base EventEmitterClass
  */
-function $when (event, cb) {
-  if (val(cb) === val.notDefined) return this;
-  this.on(event, cb);
-  return this;
-};
-
-/**
- * Base EventClass
- */
-var EventClass_ = EventClass.extend({
+var EventEmitterClass_ = EventEmitterClass.extend({
 
   /**
-   * EventClass Constructor.
+   * EventEmitterClass Constructor.
    * @fires class.bootstrapped
    * @fires class.initialized
    */
-  constructor: function EventClass () {
-    EventClass.call(this);
+  constructor: function EventEmitterClass () {
+    EventEmitterClass.call(this);
   },
 
   /**
@@ -67,9 +55,9 @@ var EventClass_ = EventClass.extend({
   $fire: function $fire (Event) {
     var isString = _.isString(Event);
     if (! this.__isEvent(Event) && ! isString) return;
-    if (isString) Event = new BaseEvent(Event, { data: this });
+    if (isString) Event = new EventClass_(Event, { data: this });
 
-    this.emit(Event, Event.get('data'));
+    this.emit(Event.event, Event);
     return this;
   },
 
@@ -81,7 +69,7 @@ var EventClass_ = EventClass.extend({
   $exec: function $exec (Event) {
     if (! _.isFunction(this.exec) || ! this.__isEvent(Event)) return;
 
-    var output = this.exec(Event.get('command'), Event.get('execOptions'));
+    var output = this.exec(Event.get('command'), Event.get('options'));
     Event.set('output', output);
 
     this.$fire(Event);
@@ -93,7 +81,7 @@ var EventClass_ = EventClass.extend({
    * @param {String|Event} event
    * @param {Function} cb
    * @param {boolean} once
-   * @returns {EventClass}
+   * @returns {EventEmitterClass}
    */
   $when: function $when (event, cb, once) {
     if (this.__isEvent(event)) event = event.event;
@@ -107,7 +95,7 @@ var EventClass_ = EventClass.extend({
    * Alias for EventEmitter 'once' method.
    * @param {String|Event} event
    * @param {Function} cb
-   * @returns {EventClass}
+   * @returns {EventEmitterClass}
    */
   $after: function $after (event, cb) {
     if (this.__isEvent(event)) event = event.event;
@@ -123,9 +111,79 @@ var EventClass_ = EventClass.extend({
    * @private
    */
   __isEvent: function(event) {
-    return (event instanceof BaseEvent);
+    return (event instanceof EventClass_);
   },
 
+});
+
+/**
+ * Event Class
+ */
+var EventClass_ = EventEmitterClass.extend({
+
+  /**
+   * Constructs Event
+   * @param {String} event
+   * @param {Object} object
+   * @constructor
+   */
+  constructor: function(event, object) {
+    EventEmitterClass.apply(this);
+    this.event = event;
+    this.object = this.set(object);
+  },
+
+  /**
+   * Sets event object
+   * @param {Object|String} key
+   * @param {*} value
+   * @returns {Event}
+   */
+  set: function (key, value) {
+    if (_.isObject(key)) this.object = this.__object(key);
+    else _.set(this.object, key, value);
+    return this;
+  },
+
+  /**
+   * Return event object
+   * @param {String} key
+   * @returns {Object|undefined}
+   */
+  get: function(key) {
+    if (val(key, false) && _.has(this.object, key)) {
+      return _.get(this.object, key);
+    }
+    return this.object;
+  },
+
+  /**
+   * Checks if Event object has key
+   * @param {String} key
+   * @returns {*}
+   */
+  has: function(key) {
+    return _.has(this.object, key);
+  },
+
+  /**
+   * Returns formatted event data object.
+   * @param {String} command
+   * @param {Object} options
+   * @param {*} data
+   * @param {Object|ChildProcess} output
+   * @returns {Object}
+   * @private
+   */
+  __object: function(options) {
+    options = val(options, {}, _.isObject);
+    return _.defaults(options, {
+      command: {},
+      options: {},
+      output: undefined,
+      data: undefined,
+    });
+  }
 });
 
 /**
@@ -145,9 +203,9 @@ var Class_ = Class.extend({
 
 /**
  * Export Classes
- * @type {{BaseClass: Object, Class: Class}}
  */
 module.exports = {
+  EventEmitterClass: EventEmitterClass_,
   EventClass: EventClass_,
   Class: Class_,
 }
