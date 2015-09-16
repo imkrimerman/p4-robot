@@ -9,7 +9,7 @@
  * @returns {*}
  */
 module.exports = function() {
-  var out = this.$exec(this.event('logout'));
+  var out = this.$exec(this.event('logout', { command: 'logout' }));
   this.__cache.del('test:true');
   return out;
 };

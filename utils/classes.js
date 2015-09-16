@@ -68,7 +68,11 @@ var EventEmitterClass_ = EventEmitterClass.extend({
    */
   $exec: function $exec (Event) {
     if (! _.isFunction(this.exec) || ! this.__isEvent(Event)) return;
-    var output = this.exec(Event.get('command'), Event.get('options'));
+
+    var command = Event.get('command');
+    if (! _.isString(command)) throw 'Not executable command';
+
+    var output = this.exec(command, Event.get('options'));
     Event.set('output', output);
 
     this.$fire(Event);
