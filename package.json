@@ -1,6 +1,6 @@
 {
   "name": "p4-robot",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Node port to perforce",
   "main": "index.js",
   "repository": {
