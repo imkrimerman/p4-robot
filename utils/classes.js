@@ -79,7 +79,7 @@ var EventClass_ = EventClass.extend({
    * @returns {Object|ChildProcess}
    */
   $exec: function $exec (Event) {
-    if (! _.isFunction(this.exec) || ! this.__isEvent(Event))) return;
+    if (! _.isFunction(this.exec) || ! this.__isEvent(Event)) return;
 
     var output = this.exec(Event.get('command'), Event.get('execOptions'));
     Event.set('output', output);
