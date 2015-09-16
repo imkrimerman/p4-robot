@@ -43,7 +43,7 @@ var _ = require('lodash');
  */
 module.exports = function(options, execOptions) {
   options = optionsToCommand(options);
-  return this.$$exec('sync' + options, execOptions, 'sync', { options: options });
+  return this.$exec('sync' + options, execOptions, 'sync', { options: options });
 };
 
 /**

@@ -17,7 +17,7 @@ module.exports = function(path, changelist, execOptions) {
   if (! this.opened(path)) {
     changelist = val(changelist, this.config.defaultChangelist);
     var command = 'edit -c ' + changelist + ' ' + path;
-    return this.$$exec(command, execOptions, 'edit', { path: path, changelist: changelist });
+    return this.$exec(command, execOptions, 'edit', { path: path, changelist: changelist });
   }
   return false;
 };

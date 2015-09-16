@@ -1,2 +1,11 @@
 # P4 Robot
-Node port to perforce
+### Event driven Perforce module for Node JS
+
+Installation
+```
+npm install --save p4-robot
+```
+
+Usage
+```js
+```

@@ -1,5 +1,6 @@
 'use strict'
-var val = require('im.val');
+var val = require('im.val')
+  , Event = require('../utils/event');
 /***************************************************************************
  *
  * Opens file in add mode
@@ -16,8 +17,13 @@ module.exports = function(path, changelist, execOptions) {
   // open file in add mode only if it's not opened yet
   if (! this.opened(path)) {
     changelist = val(changelist, this.config.defaultChangelist);
-    var command = 'add -c ' + changelist + ' ' + path;
-    return this.$$exec(command, execOptions, 'add', { path: path, changelist: changelist });
+    var event = new Event('add', {
+        command: 'add',
+        options: '-c ' + changelist + ' ' + path,
+        execOptions: execOptions,
+        data: { path: path, changelist: changelist }
+      });
+    return this.$exec(event);
   }
   return false;
 };

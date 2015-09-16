@@ -21,7 +21,7 @@ module.exports = function(options, execOptions) {
     this.log.warn('Can\'t lock not opened file: ' + path);
     return;
   }
-  return this.$$exec('lock' + optionsToCmd(options), execOptions, 'lock', { options: options });
+  return this.$exec('lock' + optionsToCmd(options), execOptions, 'lock', { options: options });
 };
 
 /**

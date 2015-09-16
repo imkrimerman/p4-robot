@@ -13,6 +13,6 @@ var _ = require('lodash')
 module.exports = function() {
   var which = this.$.shell.which('p4')
     ,  out = _.isString(which) && nodePath.isAbsolute(which);
-  this.$$fire('which', { command: 'p4', output: out });
+  this.$fire('which', { command: 'p4', output: out });
   return out;
 };

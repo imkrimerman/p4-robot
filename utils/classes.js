@@ -2,7 +2,8 @@
 var EventEmitter = require('events').EventEmitter
   , val = require('im.val')
   , extend = require('class-extend').extend
-  , _ = require('lodash');
+  , _ = require('lodash')
+  , BaseEvent = require('./event');
 /***************************************************************************
  *
  * Classes
@@ -33,6 +34,18 @@ _.extend(EventClass.prototype, EventEmitter.prototype);
 Class.extend = EventClass.extend = extend;
 
 /**
+ * Alias for EventEmitter 'on' method.
+ * @param {String} event
+ * @param {Function} cb
+ * @returns {EventClass}
+ */
+function $when (event, cb) {
+  if (val(cb) === val.notDefined) return this;
+  this.on(event, cb);
+  return this;
+};
+
+/**
  * Base EventClass
  */
 var EventClass_ = EventClass.extend({
@@ -48,36 +61,71 @@ var EventClass_ = EventClass.extend({
 
   /**
    * Fire event.
-   * @param {String} event
-   * @param {*|undefined} data
+   * @param {StringEvent} Event
    * @returns {Object|ChildProcess}
    */
-  $$fire: function(event, data) {
-    if (! _.isString(event)) return;
-    if (val(data) === val.notDefined) data = this;
-    this.emit(event, data);
+  $fire: function $fire (Event) {
+    var isString = _.isString(Event);
+    if (! this.__isEvent(Event) && ! isString) return;
+    if (isString) Event = new BaseEvent(Event, { data: this });
+
+    this.emit(Event, Event.get('data'));
+    return this;
   },
 
   /**
    * Execute command and fire event with provided Event Emitter.
-   * @param {String} command - Execute command
-   * @param {Object} options - Execute command options
-   * @param {String} event - Event name 'add'
-   * @param {*|undefined} data - Data to fire event with
+   * @param {Event} Event - Event object
    * @returns {Object|ChildProcess}
    */
-  $$exec: function(command, options, event, data) {
-    if (! _.isFunction(this.exec) || _.isString(command)) return;
+  $exec: function $exec (Event) {
+    if (! _.isFunction(this.exec) || ! this.__isEvent(Event))) return;
 
-    options = val(options, {}, _.isObject);
-    var output = this.exec(command, options);
+    var output = this.exec(Event.get('command'), Event.get('execOptions'));
+    Event.set('output', output);
 
-    data = { command: command, options: options, data: data, output: null };
-    data.output = output;
-
-    this.$$fire(event, data);
+    this.$fire(Event);
     return output;
-  }
+  },
+
+  /**
+   * Alias for EventEmitter 'on' method.
+   * @param {String|Event} event
+   * @param {Function} cb
+   * @param {boolean} once
+   * @returns {EventClass}
+   */
+  $when: function $when (event, cb, once) {
+    if (this.__isEvent(event)) event = event.event;
+    if (val(cb) === val.notDefined) return this;
+    if (val(once, false)) return this.$after(event, cb);
+    this.on(event, cb);
+    return this;
+  },
+
+  /**
+   * Alias for EventEmitter 'once' method.
+   * @param {String|Event} event
+   * @param {Function} cb
+   * @returns {EventClass}
+   */
+  $after: function $after (event, cb) {
+    if (this.__isEvent(event)) event = event.event;
+    if (val(cb) === val.notDefined) return this;
+    this.once(event, cb);
+    return this;
+  },
+
+  /**
+   * Checks if event is instance of Event Class
+   * @param {*} event
+   * @returns {boolean}
+   * @private
+   */
+  __isEvent: function(event) {
+    return (event instanceof BaseEvent);
+  },
+
 });
 
 /**
@@ -101,5 +149,5 @@ var Class_ = Class.extend({
  */
 module.exports = {
   EventClass: EventClass_,
-  Class: Class_
+  Class: Class_,
 }

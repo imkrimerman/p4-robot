@@ -22,7 +22,7 @@ module.exports = function(options, isLocal) {
   else options = val(options, {});
 
   var opened = all(this, options, isLocal);
-  this.$$fire('opened', {opened: opened, options: options, isLocal: isLocal});
+  this.$fire('opened', {opened: opened, options: options, isLocal: isLocal});
   return opened;
 };
 

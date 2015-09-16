@@ -12,7 +12,7 @@
  */
 module.exports = function(options, execOptions) {
   options = optionsToCommand(options);
-  return this.$$exec('submit' + options, execOptions, 'submit', { options: options });
+  return this.$exec('submit' + options, execOptions, 'submit', { options: options });
 };
 
 
