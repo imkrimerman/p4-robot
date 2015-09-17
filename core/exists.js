@@ -1,6 +1,6 @@
 'use strict'
 var _ = require('lodash')
-  , nodePath = require('path');
+  , isAbsolute = require('path-is-absolute');
 /***************************************************************************
  *
  * Exists
@@ -12,7 +12,7 @@ var _ = require('lodash')
  */
 module.exports = function() {
   var which = this.$.shell.which('p4')
-    ,  out = _.isString(which) && nodePath.isAbsolute(which);
+    ,  out = _.isString(which) && isAbsolute(which);
   this.$fire(this.event('which', { command: 'p4', output: out }));
   return out;
 };
