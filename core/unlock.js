@@ -1,6 +1,7 @@
 'use strict'
 var nodePath = require('path')
   , val = require('im.val')
+  , isAbsolute = require('path-is-absolute')
   , shell = require('../utils/shell');
 /***************************************************************************
  *
@@ -29,6 +30,6 @@ module.exports = function(path, changelist, execOptions) {
  * @returns {*}
  */
 module.exports.dirty = function(path) {
-  path = nodePath.isAbsolute(path) ? path : nodePath.join(process.cwd(), path);
+  path = isAbsolute(path) ? path : nodePath.join(process.cwd(), path);
   return shell.chmod('u+w ', path);
 }

@@ -3,6 +3,7 @@ var val = require('im.val')
   , _ = require('lodash')
   , str = require('underscore.string')
   , nodePath = require('path')
+  , isAbsolute = require('path-is-absolute')
   , destruct = require('../utils/destruct');
 /***************************************************************************
  *
@@ -100,7 +101,7 @@ function localize (self, opened) {
  * @returns {boolean}
  */
 function is (self, path, isLocal) {
-  path = nodePath.isAbsolute(path) ? path : nodePath.join(process.cwd(), path);
+  path = isAbsolute(path) ? path : nodePath.join(process.cwd(), path);
   isLocal = val(isLocal, true);
   var opened = all(self, {}, isLocal)
     , isOpened = _.findWhere(opened, { path: path });
